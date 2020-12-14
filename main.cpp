@@ -14,9 +14,7 @@ enum displayMode {
     GRID = 0, RANDOMSAMPLING = 1, COLOR = 2
 };
 
-
 int main() {
-
     int mode = GRID;
 
     std::vector<ChargedParticle> particleList = {
@@ -24,17 +22,16 @@ int main() {
         ChargedParticle(-1000000, 420, 240),
     };
 
-
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist(5, 19); // distribution in range [1, 6]
 
-
-
-
-    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
+    int sdlResult = SDL_Init(SDL_INIT_VIDEO);
+    if (sdlResult == 0) {
         SDL_Window* window = NULL;
         SDL_Renderer* renderer = NULL;
+
+        printf("Started\n");
 
         if (SDL_CreateWindowAndRenderer(1240, 880, 0, &window, &renderer) == 0) {
             SDL_bool done = SDL_FALSE;
@@ -64,7 +61,6 @@ int main() {
                             totalY += dy;
                         }
 
-
                         double r = sqrt(totalX * totalX + totalY * totalY);
                         double shortR = min(r, (mode == COLOR) ? 127 : 40.0);
 
@@ -83,11 +79,7 @@ int main() {
                     }
                 }
 
-
-
                 SDL_RenderPresent(renderer);
-
-
                 while (SDL_PollEvent(&event)) {
                     switch (event.type) {
                         case SDL_QUIT:
@@ -99,7 +91,6 @@ int main() {
                             break;
                         case SDL_KEYDOWN:
                             if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {mode = (mode + 1) % 3;}
-                                
                             break;
                     }
                 }
@@ -114,6 +105,9 @@ int main() {
         }
     }
     SDL_Quit();
+
+    std::cout << "Ended with exit code " << sdlResult << "\n";
+    std::cout << SDL_GetError() << "\n";
+    
     return 0;
 }
-
